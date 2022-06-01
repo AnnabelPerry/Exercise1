@@ -40,7 +40,7 @@ ui = fluidPage(
               #header
               h2('Morph Selection'),
               radioButtons(
-                inputId = "selection_id",
+                inputId = "radio_button",
                 label = "Select a morph",
                 choices = NULL,
                 selected = NULL,
@@ -48,7 +48,7 @@ ui = fluidPage(
                 choiceValues = c("Cave","Surface")
               ),
               #output radiobutton table
-              tableOutput("Table_out"),
+              tableOutput("table_out"),
               
               #output reactive plot
               plotOutput('plot_out'),
@@ -78,21 +78,21 @@ ui = fluidPage(
 server = function(input, output){
   
   #read file to store as data
-  df <- read.csv("PopulationLocations.csv")
+  df <- read.csv("data/PopulationLocations.csv")
 
   output$table_out <- renderTable(
-    if (input$radio_button == "Cave") {
+    if (input$radio_button == "Cave"){
       df[df$Morph == "Cave",]
-    } else {
+    }else{
       df[df$Morph == "Surface",]
     }
   )
   
   #new data for reactive plot, based on radiobutton input
   data_filtered <- reactive({
-    if(input$selection_id == 'Cave'){
+    if(input$radio_button == 'Cave'){
       new_df <- df[df$Morph == 'Cave',]
-    } else if(input$ selection_id == 'Surface'){
+    } else if(input$radio_button == 'Surface'){
       new_df <- df[df$Morph == 'Surface',]
     }
     return(new_df)
@@ -147,7 +147,7 @@ server = function(input, output){
       paste("Table_Download_",Sys.Date(),".csv", sep = '')
     },
     content = function(file){
-      write.csv(df, file, row.names = FALSE)
+      write.csv(reactive_table(), file, row.names = FALSE)
     }
   )
 }
